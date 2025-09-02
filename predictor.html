@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agripredict AI</title>
+    <style>
+        :root {
+            --brand-green: #22C55E;
+            --brand-green-light: #4ADE80;
+            --brand-brown: #A16207;
+            --brand-bg: #F0FDF4;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --white: #ffffff;
+            --red-100: #fee2e2;
+            --red-400: #f87171;
+            --red-700: #b91c1c;
+            --green-100: #dcfce7;
+            --green-200: #bbf7d0;
+            --green-500: #22c55e;
+            --green-600: #16a34a;
+            --green-700: #15803d;
+            --yellow-50: #fefce8;
+            --yellow-100: #fef9c3;
+            --yellow-500: #eab308;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            50% {
+                opacity: .5;
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--brand-bg);
+            color: var(--gray-800);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .container {
+                padding: 2rem;
+            }
+        }
+
+        /* Header */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo-container h1 {
+            font-size: 1.5rem;
+            line-height: 2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin: 0;
+        }
+
+        .logo-container h1 span {
+            color: var(--brand-green);
+        }
+        
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .ai-badge {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--brand-brown);
+            background-color: var(--yellow-100);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            display: none;
+        }
+
+        @media (min-width: 640px) {
+            .ai-badge {
+                display: block;
+            }
+        }
+
+        /* Main Content Grid */
+        main .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: start;
+            margin-top: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            main .grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        /* Card */
+        .card {
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        @media (min-width: 768px) {
+            .card {
+                padding: 2rem;
+            }
+        }
+        
+        .card h2 {
+            font-size: 1.5rem;
+            line-height: 2rem;
+            font-weight: 700;
+            color: var(--brand-green);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 0.5rem;
+        }
+        
+        .card .description {
+            margin-bottom: 1.5rem;
+            color: var(--gray-600);
+        }
+        
+        /* Form */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .form-grid {
+             display: grid;
+             grid-template-columns: 1fr;
+             gap: 1.5rem;
+        }
+        
+        @media (min-width: 768px) {
+            .form-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        
+        @media (min-width: 1280px) {
+            .form-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 0.25rem;
+        }
+
+        .form-input,
+        .form-select {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.375rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            font-size: 0.875rem;
+            box-sizing: border-box;
+        }
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--brand-green);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.5);
+        }
+
+        .submit-btn {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--brand-green);
+            color: var(--white);
+            font-weight: 700;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--brand-green-light);
+        }
+
+        .submit-btn:disabled {
+            background-color: var(--gray-300);
+            cursor: not-allowed;
+        }
+
+        /* Results Display */
+        .results-placeholder {
+            text-align: center;
+            padding: 2.5rem 0;
+            color: var(--gray-500);
+        }
+        
+        /* Skeleton Loader for Results */
+        .skeleton-loader {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .skeleton-loader .loading-text {
+            text-align: center;
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .skeleton-loader div > div {
+            animation: shimmer 2s infinite linear;
+            background: linear-gradient(to right, var(--gray-200) 8%, var(--gray-300) 18%, var(--gray-200) 33%);
+            background-size: 1200px 100%;
+            border-radius: 0.375rem;
+        }
+
+        .skeleton-summary,
+        .skeleton-section {
+            margin-bottom: 2rem;
+        }
+
+        .skeleton-title {
+            height: 1.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .skeleton-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .skeleton-metric-item {
+            height: 5rem;
+        }
+
+        .skeleton-line {
+            height: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 0.25rem;
+        }
+
+        .error-message {
+            background-color: var(--red-100);
+            border: 1px solid var(--red-400);
+            color: var(--red-700);
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+        
+        .prediction-result {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .yield-summary {
+            text-align: center;
+            padding: 1rem;
+            background-color: var(--green-100);
+            border-radius: 0.5rem;
+            border: 1px solid var(--green-200);
+        }
+        
+        .yield-summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .yield-summary-header p {
+             color: var(--green-700);
+             font-weight: 600;
+             font-size: 1.125rem;
+             margin: 0;
+        }
+
+        .yield-metrics {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .yield-metrics {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        
+        .metric-item {
+             padding: 1rem;
+             background: var(--white);
+             border-radius: 0.375rem;
+        }
+        
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--green-700);
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--brand-green);
+            margin: 0.25rem 0;
+        }
+        
+        .metric-unit {
+            font-size: 0.875rem;
+            color: var(--green-600);
+        }
+        
+        .result-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .result-section h3 .title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .result-section ul {
+            list-style-type: disc;
+            list-style-position: inside;
+            padding: 1rem;
+            margin: 0;
+            border-radius: 0.375rem;
+            color: var(--gray-600);
+        }
+        
+        .recommendations-list {
+             background-color: var(--gray-100);
+        }
+        
+        .risks-list {
+            background-color: var(--yellow-50);
+        }
+        
+        .result-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* TTS Controls */
+        .tts-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .tts-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        
+        .tts-btn svg {
+            height: 1.5rem;
+            width: 1.5rem;
+            color: var(--gray-500);
+        }
+        
+        .tts-btn:hover {
+            background-color: var(--gray-100);
+        }
+        .tts-btn:hover svg {
+            color: var(--gray-700);
+        }
+        
+        .tts-btn[data-action="pause"] svg {
+            color: var(--brand-green);
+            animation: pulse 1.5s infinite;
+        }
+
+        /* TTS Controls Highlighting */
+        .tts-controls.active-tts .tts-btn {
+            background-color: var(--green-100);
+        }
+        .tts-controls.active-tts .tts-btn svg {
+            color: var(--brand-green);
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding-bottom: 1rem;
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="./index.html" class="logo-container">
+                 <svg xmlns="http://www.w3.org/2000/svg" style="height: 2.5rem; width: 2.5rem; color: var(--brand-green);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <h1 data-translate-key="app_title">Agripredict <span>AI</span></h1>
+            </a>
+            <div class="header-controls">
+                <span class="ai-badge" data-translate-key="ai_powered">AI Powered</span>
+                <div class="form-group">
+                    <select id="language-select" class="form-select" aria-label="Select Language">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                        <option value="te">తెలుగు</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="grid">
+            <div class="card">
+                <h2 data-translate-key="form_title">Prediction Parameters</h2>
+                <p class="description" data-translate-key="form_description">Enter the details about your farm to get an advanced AI-powered yield prediction.</p>
+                <form id="prediction-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="state-select" data-translate-key="state">State</label>
+                            <select id="state-select" class="form-select" required>
+                                <option value="" disabled selected data-translate-key="select_state">Select State</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="district-select" data-translate-key="district">District</label>
+                            <select id="district-select" class="form-select" required>
+                                 <option value="" disabled selected data-translate-key="select_district">Select District</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="crop-year-select" data-translate-key="crop_year">Crop Year</label>
+                            <select id="crop-year-select" class="form-select" required>
+                                <option value="" disabled selected data-translate-key="select_year">Select Year</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="season-select" data-translate-key="season">Season</label>
+                            <select id="season-select" class="form-select" required>
+                                <option value="" disabled selected data-translate-key="select_season">Select Season</option>
+                            </select>
+                        </div>
+                         <div class="form-group">
+                            <label for="crop-select" data-translate-key="crop">Crop</label>
+                            <select id="crop-select" class="form-select" required>
+                                 <option value="" disabled selected data-translate-key="select_crop">Select Crop</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="soil-type-select" data-translate-key="soil_type">Soil Type</label>
+                            <select id="soil-type-select" class="form-select" required>
+                                <option value="" disabled selected data-translate-key="select_soil_type">Select Soil Type</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                             <label for="area-input" data-translate-key="area">Area (Hectares)</label>
+                             <input type="number" id="area-input" class="form-input" placeholder="e.g., 10" required min="0.1" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="rainfall-input" data-translate-key="rainfall">Annual Rainfall (mm)</label>
+                            <input type="number" id="rainfall-input" class="form-input" placeholder="e.g., 1200" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="temperature-input" data-translate-key="temperature">Avg. Temperature (°C)</label>
+                            <input type="number" id="temperature-input" class="form-input" placeholder="e.g., 25" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="humidity-input" data-translate-key="humidity">Average Humidity (%)</label>
+                            <input type="number" id="humidity-input" class="form-input" placeholder="e.g., 75" required min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="wind-speed-input" data-translate-key="wind_speed">Wind Speed (km/h)</label>
+                            <input type="number" id="wind-speed-input" class="form-input" placeholder="e.g., 10" required min="0">
+                        </div>
+                         <div class="form-group">
+                            <label for="fertilizer-input" data-translate-key="fertilizer_usage">Fertilizer Usage (kg/ha)</label>
+                            <input type="number" id="fertilizer-input" class="form-input" placeholder="e.g., 150" required min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="pesticide-input" data-translate-key="pesticide_usage">Pesticide Usage (L/ha)</label>
+                            <input type="number" id="pesticide-input" class="form-input" placeholder="e.g., 2" required min="0">
+                        </div>
+                    </div>
+                    <button type="submit" id="submit-btn" class="submit-btn">
+                        <span data-translate-key="predict_yield">Predict Yield</span>
+                    </button>
+                </form>
+            </div>
+            <div class="card">
+                <h2 data-translate-key="results_title">Prediction Results</h2>
+                <div id="results-container">
+                    <div class="results-placeholder">
+                        <p data-translate-key="results_placeholder">Your crop yield analysis will appear here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p data-translate-key="footer_text">Powered by Advanced AI. For educational purposes only.</p>
+    </footer>
+
+    <script type="module">
+        import { GoogleGenAI, Type } from "https://esm.run/@google/genai";
+
+        (function() {
+            // --- STATE ---
+            let currentLanguage = 'en';
+            let voices = [];
+            // TTS State
+            let ttsStatus = 'stopped'; // 'stopped', 'playing', 'paused'
+            let activeTtsSection = null; // 'recommendations' or 'risks'
+            let currentUtterance = null;
+            
+            // --- DOM Elements ---
+            const form = document.getElementById('prediction-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const resultsContainer = document.getElementById('results-container');
+            const languageSelect = document.getElementById('language-select');
+            const stateSelect = document.getElementById('state-select');
+            const districtSelect = document.getElementById('district-select');
+            const cropYearSelect = document.getElementById('crop-year-select');
+            const seasonSelect = document.getElementById('season-select');
+            const cropSelect = document.getElementById('crop-select');
+            const soilTypeSelect = document.getElementById('soil-type-select');
+            
+            // --- DATA ---
+            const translations = {
+                en: {
+                    app_title: "Agripredict<span> AI</span>", ai_powered: "AI Powered", form_title: "Prediction Parameters",
+                    form_description: "Enter the details about your farm to get an advanced AI-powered yield prediction.", state: "State",
+                    select_state: "Select State", district: "District", select_district: "Select District", crop_year: "Crop Year",
+                    select_year: "Select Year", season: "Season", select_season: "Select Season", crop: "Crop", select_crop: "Select Crop", 
+                    soil_type: "Soil Type", select_soil_type: "Select Soil Type", area: "Area (Hectares)", rainfall: "Annual Rainfall (mm)", 
+                    temperature: "Avg. Temperature (°C)", fertilizer_usage: "Fertilizer Usage (kg/ha)", pesticide_usage: "Pesticide Usage (L/ha)", 
+                    predict_yield: "Predict Yield", results_title: "Prediction Results", results_placeholder: "Your crop yield analysis will appear here.", 
+                    footer_text: "Powered by Advanced AI. For educational purposes only.", loading_message: "Analyzing data and calculating yield...", 
+                    error_message: "An error occurred. Please try again.", yield_summary_title: "Yield Summary", 
+                    total_production: "Total Production", yield_per_hectare: "Yield", recommendations_title: "Recommendations", 
+                    risks_title: "Potential Risks", tonnes_unit: "tonnes", tonnes_per_ha_unit: "tonnes/hectare",
+                    humidity: "Average Humidity (%)", wind_speed: "Wind Speed (km/h)",
+                    production_desc: "Total predicted production in tonnes.",
+                    yield_desc: "Predicted yield in tonnes per hectare.",
+                    recommendations_desc: "A list of actionable recommendations for the farmer.",
+                    risks_desc: "A list of potential risks to the crop.",
+                    play_aria: "Play", pause_aria: "Pause", stop_aria: "Stop"
+                },
+                hi: {
+                    app_title: "फसल उपज <span>AI</span>", ai_powered: "एआई संचालित", form_title: "भविष्यवाणी पैरामीटर",
+                    form_description: "उन्नत एआई-संचालित उपज भविष्यवाणी प्राप्त करने के लिए अपने खेत का विवरण दर्ज करें।", state: "राज्य",
+                    select_state: "राज्य चुनें", district: "ज़िला", select_district: "ज़िला चुनें", crop_year: "फसल वर्ष",
+                    select_year: "वर्ष चुनें", season: "मौसम", select_season: "मौसम चुनें", crop: "फ़सल", select_crop: "फ़सल चुनें",
+                    soil_type: "मिट्टी का प्रकार", select_soil_type: "मिट्टी का प्रकार चुनें", area: "क्षेत्र (हेक्टेयर)", rainfall: "वार्षिक वर्षा (मिमी)", 
+                    temperature: "औसत तापमान (°C)", fertilizer_usage: "उर्वरक उपयोग (किग्रा/हेक्टेयर)", pesticide_usage: "कीटनाशक उपयोग (ली/हेक्टेयर)", 
+                    predict_yield: "उपज की भविष्यवाणी करें", results_title: "भविष्यवाणी के परिणाम", results_placeholder: "आपकी फसल उपज का विश्लेषण यहाँ दिखाई देगा।", 
+                    footer_text: "उन्नत एआई द्वारा संचालित। केवल शैक्षिक उद्देश्यों के लिए।", loading_message: "डेटा का विश्लेषण और उपज की गणना हो रही है...", 
+                    error_message: "एक त्रुटि हुई। कृपया पुन: प्रयास करें।", yield_summary_title: "उपज सारांश", total_production: "कुल उत्पादन", 
+                    yield_per_hectare: "उपज", recommendations_title: "सिफारिशें", risks_title: "संभावित जोखिम", 
+                    tonnes_unit: "टन", tonnes_per_ha_unit: "टन/हेक्टेयर",
+                    humidity: "औसत आर्द्रता (%)", wind_speed: "हवा की गति (किमी/घंटा)",
+                    production_desc: "कुल अनुमानित उत्पादन टन में।",
+                    yield_desc: "अनुमानित उपज टन प्रति हेक्टेयर में।",
+                    play_aria: "चलाएं", pause_aria: "रोकें", stop_aria: "बंद करें"
+                },
+                te: {
+                    app_title: "పంట దిగుబడి <span>AI</span>", ai_powered: "AI ఆధారితం", form_title: "అంచనా పారామితులు",
+                    form_description: "అధునాతన AI- ఆధారిత దిగుబడి అంచనాను పొందడానికి మీ వ్యవసాయ క్షేత్రం వివరాలను నమోదు చేయండి.", state: "రాష్ట్రం",
+                    select_state: "రాష్ట్రం ఎంచుకోండి", district: "జిల్లా", select_district: "జిల్లా ఎంచుకోండి", crop_year: "పంట సంవత్సరం",
+                    select_year: "సంవత్సరం ఎంచుకోండి", season: "సీజన్", select_season: "సీజన్ ఎంచుకోండి", crop: "పంట", select_crop: "పంటను ఎంచుకోండి",
+                    soil_type: "నేల రకం", select_soil_type: "నేల రకాన్ని ఎంచుకోండి", area: "విస్తీర్ణం (హెక్టార్లు)", rainfall: "వార్షిక వర్షపాతం (మిమీ)", 
+                    temperature: "సగటు ఉష్ణోగ్రత (°C)", fertilizer_usage: "ఎరువుల వాడకం (కిలో/హెక్టారు)", pesticide_usage: "పురుగుమందుల వాడకం (లీ/హెక్టారు)", 
+                    predict_yield: "దిగుబడిని అంచనా వేయండి", results_title: "అంచనా ఫలితాలు", results_placeholder: "మీ పంట దిగుబడి విశ్లేషణ ఇక్కడ కనిపిస్తుంది.", 
+                    footer_text: "అధునాతన AI ద్వారా ఆధారితం. విద్యా ప్రయోజనాల కోసం మాత్రమే.", loading_message: "డేటాను విశ్లేషించడం మరియు దిగుబడిని లెక్కించడం...", 
+                    error_message: "లోపం సంభవించింది. దయచేసి మళ్లీ ప్రయత్నించండి.", yield_summary_title: "దిగుబడి సారాంశం", 
+                    total_production: "మొత్తం ఉత్పత్తి", yield_per_hectare: "దిగుబడి", recommendations_title: "సిఫార్సులు", 
+                    risks_title: "సంభావ్య ప్రమాదాలు", tonnes_unit: "టన్నులు", tonnes_per_ha_unit: "టన్నులు/హెక్టారుకు",
+                    humidity: "సగటు తేమ (%)", wind_speed: "గాలి వేగం (కిమీ/గం)",
+                    production_desc: "టన్నులలో మొత్తం అంచనా వేయబడిన ఉత్పత్తి.",
+                    yield_desc: "హెక్టారుకు టన్నులలో అంచనా వేయబడిన దిగుబడి.",
+                    play_aria: "ప్లే చేయండి", pause_aria: "పాజ్ చేయండి", stop_aria: "ఆపండి"
+                }
+            };
+
+            const indianStatesData = {
+                "Andhra Pradesh": ["Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", "Prakasam", "Srikakulam", "Sri Potti Sriramulu Nellore", "Visakhapatnam", "Vizianagaram", "West Godavari", "Y.S.R. Kadapa"],
+                "Karnataka": ["Bagalkot", "Ballari (Bellary)", "Belagavi (Belgaum)", "Bengaluru (Bangalore) Rural", "Bengaluru (Bangalore) Urban", "Bidar", "Chamarajanagar", "Chikballapur", "Chikkamagaluru (Chikmagalur)", "Chitradurga", "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", "Haveri", "Kalaburagi (Gulbarga)", "Kodagu", "Kolar", "Koppal", "Mandya", "Mysuru (Mysore)", "Raichur", "Ramanagara", "Shivamogga (Shimoga)", "Tumakuru (Tumkur)", "Udupi", "Uttara Kannada", "Vijayapura (Bijapur)", "Yadgir"],
+                "Maharashtra": ["Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"],
+                "Tamil Nadu": ["Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", "Krishnagiri", "Madurai", "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi (Tuticorin)", "Tiruchirappalli", "Tirunelveli", "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"],
+                "Telangana": ["Adilabad", "Bhadradri Kothudem", "Hyderabad", "Jagtial", "Jangaon", "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", "Khammam", "Komaram Bheem", "Mahabubabad", "Mahabubnagar", "Mancherial", "Medak", "Medchal", "Nagarkurnool", "Nalgonda", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", "Rangareddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", "Wanaparthy", "Warangal (Rural)", "Warangal (Urban)", "Yadadri Bhuvanagiri"]
+            };
+            
+            const commonCrops = ["Rice", "Wheat", "Maize", "Cotton", "Sugarcane", "Soybean", "Groundnut", "Pulses", "Jowar", "Bajra", "Ragi", "Sunflower", "Gram"];
+            const soilTypes = ["Alluvial", "Black (Regur)", "Red and Yellow", "Laterite", "Arid (Desert)", "Forest and Mountainous", "Saline and Alkaline", "Peaty and Marshy"];
+            const ttsIcons = {
+                play: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>',
+                pause: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>',
+                stop: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"></path></svg>',
+            };
+
+            // --- FUNCTIONS ---
+            
+            function populateVoiceList() {
+                voices = window.speechSynthesis.getVoices();
+            }
+
+            function setLanguage(lang) {
+                currentLanguage = lang;
+                document.querySelectorAll('[data-translate-key]').forEach(el => {
+                    const key = el.dataset.translateKey;
+                    if (translations[lang][key]) {
+                        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                            el.placeholder = translations[lang][key];
+                        } else if (el.tagName === 'OPTION' && el.disabled) {
+                             el.innerText = translations[lang][key];
+                        }
+                        else {
+                            el.innerHTML = translations[lang][key];
+                        }
+                    }
+                });
+                populateSeasons();
+                stopAudio();
+            }
+
+            function populateStates() {
+                const states = Object.keys(indianStatesData).sort();
+                states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state;
+                    option.textContent = state;
+                    stateSelect.appendChild(option);
+                });
+            }
+            
+            function populateDistricts(state) {
+                districtSelect.innerHTML = `<option value="" disabled selected data-translate-key="select_district">${translations[currentLanguage].select_district}</option>`;
+                if(state && indianStatesData[state]) {
+                    const districts = indianStatesData[state].sort();
+                    districts.forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district;
+                        option.textContent = district;
+                        districtSelect.appendChild(option);
+                    });
+                }
+            }
+
+            function populateYears() {
+                const currentYear = new Date().getFullYear();
+                for (let year = currentYear; year >= 2010; year--) {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    cropYearSelect.appendChild(option);
+                }
+            }
+
+            function populateSeasons() {
+                const currentVal = seasonSelect.value;
+                const seasons = {
+                    en: ["Kharif", "Rabi", "Summer", "Whole Year"],
+                    hi: ["खरीफ", "रबी", "गर्मी", "पूरे साल"],
+                    te: ["ఖరీఫ్", "రబీ", "వేసవి", "సంవత్సరం మొత్తం"]
+                };
+                seasonSelect.innerHTML = `<option value="" disabled selected data-translate-key="select_season">${translations[currentLanguage].select_season}</option>`;
+                seasons[currentLanguage].forEach((season, index) => {
+                    const option = document.createElement('option');
+                    option.value = seasons.en[index]; // Use English value for consistency in API
+                    option.textContent = season;
+                    seasonSelect.appendChild(option);
+                });
+                if(currentVal) seasonSelect.value = currentVal;
+            }
+
+            function populateCrops() {
+                commonCrops.sort().forEach(crop => {
+                    const option = document.createElement('option');
+                    option.value = crop;
+                    option.textContent = crop;
+                    cropSelect.appendChild(option);
+                });
+            }
+
+            function populateSoilTypes() {
+                soilTypes.sort().forEach(soil => {
+                    const option = document.createElement('option');
+                    option.value = soil;
+                    option.textContent = soil;
+                    soilTypeSelect.appendChild(option);
+                });
+            }
+            
+            function displayLoading() {
+                resultsContainer.innerHTML = `
+                    <div class="skeleton-loader">
+                        <p class="loading-text">${translations[currentLanguage].loading_message}</p>
+                        <div class="skeleton-summary">
+                            <div class="skeleton-title" style="width: 50%;"></div>
+                            <div class="skeleton-metrics">
+                                <div class="skeleton-metric-item"></div>
+                                <div class="skeleton-metric-item"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-section">
+                            <div class="skeleton-title" style="width: 40%;"></div>
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line" style="width: 70%;"></div>
+                        </div>
+                        <div class="skeleton-section">
+                            <div class="skeleton-title" style="width: 45%;"></div>
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function displayError(message) {
+                resultsContainer.innerHTML = `<div class="error-message">${message}</div>`;
+            }
+
+            // --- TTS Functions ---
+            function updateTtsControlsUI() {
+                const sections = ['recommendations', 'risks'];
+                sections.forEach(section => {
+                    const controls = document.querySelector(`[data-tts-controls-for="${section}"]`);
+                    if (!controls) return;
+
+                    const playPauseBtn = controls.querySelector('.play-pause-btn');
+                    const stopBtn = controls.querySelector('.stop-btn');
+                    
+                    if (!playPauseBtn || !stopBtn) return;
+
+                    const isActive = (activeTtsSection === section);
+                    
+                    controls.classList.toggle('active-tts', isActive);
+                    
+                    const isPlaying = isActive && ttsStatus === 'playing';
+                    const isPaused = isActive && ttsStatus === 'paused';
+
+                    // Set Play/Pause button state
+                    playPauseBtn.innerHTML = isPlaying ? ttsIcons.pause : ttsIcons.play;
+                    playPauseBtn.setAttribute('aria-label', isPlaying ? translations[currentLanguage].pause_aria : translations[currentLanguage].play_aria);
+                    playPauseBtn.dataset.action = isPlaying ? 'pause' : 'play';
+
+                    // Set Stop button visibility
+                    stopBtn.style.display = (isPlaying || isPaused) ? 'inline-flex' : 'none';
+                });
+            }
+
+            function playAudio(section, text) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                const voiceForLang = voices.find(voice => voice.lang.startsWith(currentLanguage));
+                if (voiceForLang) {
+                    utterance.voice = voiceForLang;
+                } else {
+                    console.warn(`No specific voice found for language code '${currentLanguage}'. Using browser default.`);
+                }
+                utterance.lang = currentLanguage;
+                
+                utterance.onstart = () => {
+                    ttsStatus = 'playing';
+                    activeTtsSection = section;
+                    updateTtsControlsUI();
+                };
+                utterance.onpause = () => {
+                    ttsStatus = 'paused';
+                    updateTtsControlsUI();
+                };
+                utterance.onresume = () => {
+                    ttsStatus = 'playing';
+                    updateTtsControlsUI();
+                };
+                utterance.onend = () => {
+                     if (utterance === currentUtterance) {
+                       stopAudio();
+                    }
+                };
+                utterance.onerror = (event) => {
+                    console.error(`Speech synthesis error: ${event.error}.`);
+                    if (utterance === currentUtterance) {
+                        stopAudio();
+                    }
+                };
+                
+                currentUtterance = utterance;
+                window.speechSynthesis.speak(utterance);
+            }
+
+            function pauseAudio() {
+                if (ttsStatus === 'playing') {
+                    window.speechSynthesis.pause();
+                }
+            }
+
+            function resumeAudio() {
+                if (ttsStatus === 'paused') {
+                    window.speechSynthesis.resume();
+                }
+            }
+            
+            function stopAudio() {
+                if (currentUtterance) {
+                    currentUtterance.onend = null;
+                    currentUtterance.onerror = null;
+                }
+                if (speechSynthesis.speaking || speechSynthesis.paused) {
+                    speechSynthesis.cancel();
+                }
+                ttsStatus = 'stopped';
+                activeTtsSection = null;
+                currentUtterance = null;
+                updateTtsControlsUI();
+            }
+
+            function displayResults(data) {
+                const { predictedProduction, predictedYield, recommendations, potentialRisks } = data;
+                
+                resultsContainer.innerHTML = `
+                    <div class="prediction-result">
+                        <div class="yield-summary">
+                             <div class="yield-summary-header">
+                                <p>${translations[currentLanguage].yield_summary_title}</p>
+                            </div>
+                            <div class="yield-metrics">
+                                <div class="metric-item">
+                                    <p class="metric-label">${translations[currentLanguage].total_production}</p>
+                                    <p class="metric-value">${predictedProduction.toFixed(2)}</p>
+                                    <p class="metric-unit">${translations[currentLanguage].tonnes_unit}</p>
+                                </div>
+                                <div class="metric-item">
+                                    <p class="metric-label">${translations[currentLanguage].yield_per_hectare}</p>
+                                    <p class="metric-value">${predictedYield.toFixed(2)}</p>
+                                    <p class="metric-unit">${translations[currentLanguage].tonnes_per_ha_unit}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="result-section">
+                            <h3>
+                                <div class="title-group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" style="height:1.5rem; width:1.5rem; color: var(--green-600);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+                                    <span>${translations[currentLanguage].recommendations_title}</span>
+                                </div>
+                                <div class="tts-controls" data-tts-controls-for="recommendations">
+                                    <button class="tts-btn play-pause-btn" data-section="recommendations" data-action="play" aria-label="${translations[currentLanguage].play_aria}">${ttsIcons.play}</button>
+                                    <button class="tts-btn stop-btn" data-section="recommendations" data-action="stop" style="display: none;" aria-label="${translations[currentLanguage].stop_aria}">${ttsIcons.stop}</button>
+                                </div>
+                            </h3>
+                            <ul class="recommendations-list">${recommendations.map(r => `<li>${r}</li>`).join('')}</ul>
+                        </div>
+                         <div class="result-section">
+                            <h3>
+                                <div class="title-group">
+                                    <svg xmlns="http://www.w3.org/2000/svg" style="height:1.5rem; width:1.5rem; color: var(--yellow-500);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                    <span>${translations[currentLanguage].risks_title}</span>
+                                </div>
+                                <div class="tts-controls" data-tts-controls-for="risks">
+                                     <button class="tts-btn play-pause-btn" data-section="risks" data-action="play" aria-label="${translations[currentLanguage].play_aria}">${ttsIcons.play}</button>
+                                     <button class="tts-btn stop-btn" data-section="risks" data-action="stop" style="display: none;" aria-label="${translations[currentLanguage].stop_aria}">${ttsIcons.stop}</button>
+                                </div>
+                            </h3>
+                            <ul class="risks-list">${potentialRisks.map(r => `<li>${r}</li>`).join('')}</ul>
+                        </div>
+                    </div>
+                `;
+            }
+
+            async function handleFormSubmit(event) {
+                event.preventDefault();
+                submitBtn.disabled = true;
+                stopAudio();
+                displayLoading();
+
+                const inputs = {
+                    state: stateSelect.value,
+                    district: districtSelect.value,
+                    year: cropYearSelect.value,
+                    season: seasonSelect.value,
+                    crop: cropSelect.value,
+                    soilType: soilTypeSelect.value,
+                    area: parseFloat(document.getElementById('area-input').value),
+                    rainfall: parseFloat(document.getElementById('rainfall-input').value),
+                    temperature: parseFloat(document.getElementById('temperature-input').value),
+                    humidity: parseFloat(document.getElementById('humidity-input').value),
+                    windSpeed: parseFloat(document.getElementById('wind-speed-input').value),
+                    fertilizer: parseFloat(document.getElementById('fertilizer-input').value),
+                    pesticide: parseFloat(document.getElementById('pesticide-input').value)
+                };
+                
+                const langName = { en: "English", hi: "Hindi", te: "Telugu" }[currentLanguage];
+
+                const prompt = `
+                    You are an expert agricultural AI assistant. Based on the following data for a farm in India, predict the crop yield and provide actionable advice.
+                    
+                    **Farming Data:**
+                    - State: ${inputs.state}
+                    - District: ${inputs.district}
+                    - Crop Year: ${inputs.year}
+                    - Season: ${inputs.season}
+                    - Crop: ${inputs.crop}
+                    - Soil Type: ${inputs.soilType}
+                    - Area: ${inputs.area} hectares
+                    - Annual Rainfall: ${inputs.rainfall} mm
+                    - Average Temperature: ${inputs.temperature}°C
+                    - Average Humidity: ${inputs.humidity}%
+                    - Wind Speed: ${inputs.windSpeed} km/h
+                    - Fertilizer Usage: ${inputs.fertilizer} kg/hectare
+                    - Pesticide Usage: ${inputs.pesticide} L/hectare
+                    
+                    **Your Task:**
+                    1.  **Predict Yield:** Calculate the predicted yield in tonnes per hectare and the total production in tonnes for the specified area.
+                    2.  **Provide Recommendations:** Generate a list of 3-5 clear, concise, and actionable recommendations for the farmer to improve yield or manage the crop better. These should be specific to the provided data.
+                    3.  **Identify Risks:** Generate a list of 3-5 potential risks (e.g., pests, diseases, weather events) the farmer should be aware of for this crop in this location and season.
+
+                    **Output Language:** Please provide all text-based outputs (recommendations and risks) in ${langName}.
+                    **Output Format:** Provide the response ONLY in the specified JSON format.
+                `;
+
+                const schema = {
+                    type: Type.OBJECT,
+                    properties: {
+                        predictedYield: { type: Type.NUMBER, description: translations.en.yield_desc },
+                        predictedProduction: { type: Type.NUMBER, description: translations.en.production_desc },
+                        recommendations: { type: Type.ARRAY, items: { type: Type.STRING }, description: translations.en.recommendations_desc },
+                        potentialRisks: { type: Type.ARRAY, items: { type: Type.STRING }, description: translations.en.risks_desc },
+                    },
+                    required: ["predictedYield", "predictedProduction", "recommendations", "potentialRisks"]
+                };
+
+                try {
+                    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+                    const response = await ai.models.generateContent({
+                        model: "gemini-2.5-flash",
+                        contents: prompt,
+                        config: {
+                            responseMimeType: "application/json",
+                            responseSchema: schema,
+                        },
+                    });
+
+                    const resultText = response.text.trim();
+                    const resultJson = JSON.parse(resultText);
+                    displayResults(resultJson);
+
+                } catch (error) {
+                    console.error("API Error:", error);
+                    displayError(`${translations[currentLanguage].error_message} (${error.message || 'Unknown error'})`);
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            }
+            
+            function handleTtsClick(event) {
+                const button = event.target.closest('.tts-btn');
+                if (!button) return;
+
+                const section = button.dataset.section;
+                const action = button.dataset.action;
+                const list = document.querySelector(`.${section}-list`);
+                if (!list) return;
+
+                const textToSpeak = Array.from(list.querySelectorAll('li')).map(li => li.textContent).join('. ');
+                
+                if (activeTtsSection && activeTtsSection !== section) {
+                    stopAudio();
+                }
+
+                if (action === 'play') {
+                    if (ttsStatus === 'paused' && activeTtsSection === section) {
+                        resumeAudio();
+                    } else {
+                        stopAudio(); // Ensure any previous speech is stopped before starting new
+                        playAudio(section, textToSpeak);
+                    }
+                } else if (action === 'pause') {
+                    pauseAudio();
+                } else if (action === 'stop') {
+                    stopAudio();
+                }
+            }
+
+
+            // --- EVENT LISTENERS ---
+            languageSelect.addEventListener('change', (e) => setLanguage(e.target.value));
+            stateSelect.addEventListener('change', (e) => populateDistricts(e.target.value));
+            form.addEventListener('submit', handleFormSubmit);
+            resultsContainer.addEventListener('click', handleTtsClick);
+            
+            if (speechSynthesis.onvoiceschanged !== undefined) {
+                speechSynthesis.onvoiceschanged = populateVoiceList;
+            }
+
+            window.addEventListener('beforeunload', stopAudio);
+
+            // --- INITIALIZATION ---
+            populateVoiceList();
+            populateStates();
+            populateYears();
+            populateCrops();
+            populateSoilTypes();
+            setLanguage(currentLanguage);
+
+        })();
+    </script>
+</body>
+</html>

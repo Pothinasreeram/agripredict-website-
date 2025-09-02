@@ -1,0 +1,5 @@
+{
+  "name": "Crop Yield Predictor",
+  "description": "An AI-powered application to predict crop yields based on various agricultural parameters like weather, soil type, and crop choice. Get data-driven insights to optimize your farming strategy.",
+  "requestFramePermissions": []
+}
